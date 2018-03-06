@@ -2,50 +2,52 @@ package Voicezone_StepDefinition;
 
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 
 import cucumber.api.java.en.Given;
 
-public class NotifybyEmail  {
- 
-	public static WebDriver driver;
-	@Given("^B$")
-	public void B() throws InterruptedException {
-		System.setProperty("webdriver.chrome.driver","C:\\Users\\s.d.saravanan\\Downloads\\Drivers\\chromedriver.exe");
-	    driver = new ChromeDriver();
-	 	driver.manage().window().maximize();
-	    driver.get("http://voicezone.timewarnercable.com");
-		 Thread.sleep(5000); 
-	     driver.findElement(By.id("cc-username")).sendKeys("pacoctest123");
-		  System.out.println("qtest1");
-		  driver.findElement(By.id("cc-user-password")).sendKeys("Cable123");
-		  Thread.sleep(15000);
-		  driver.findElement(By.id("login-form-button")).click();
-		  Thread.sleep(10000);
-		int chk=0;
-	    do{
-	         Thread.sleep(1000);       
-	        chk++;
-	        System.out.println(chk);
-	              }
-	   while(driver.findElement(By.xpath("//*[@id='progress']")).isDisplayed());
+public class NotifybyEmail extends Commonfiles {
+	@Given("^NotifybyEmail Get\"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and \"([^\"]*)\" and (\\d+)$")
+	public void notifybyemail_Get_and_and_and_and(String Username, String Password, String Exe, String br, int tlim) throws Throwable {
+		String schk="Fail";
+		    if(Exe.equals("Yes"))
+		    {
+		       if(first==0) {
+		    	login(Username,Password,br,tlim);	
+		    }
+		        else
+			    {
+			   	 focusClick(driver,driver.findElement(By.id("settings-summary")),br);
+			    }
+		        
+		     driver=getDriver();
+			 System.out.println("Notify by Email Inprogress");
+			 int chk=0;
+			    do{
+			         Thread.sleep(1000);       
+			        chk++;
+			        System.out.println(chk);
+			              }
+			    while(driver.findElement(By.xpath("//*[@id='progress']")).isDisplayed());
+			 Thread.sleep(20000);
+			 driver.findElement(By.xpath(".//*[@id='ContentRefresh']/div/div[3]/div[2]/div/a")).click();
+			 Thread.sleep(5000);
+			 index=i;
+			 schk=deleteall(driver,br);
+			 Thread.sleep(5000);
+			 if(schk.equals("Pass"))
+	         schk=emailvalidation(driver,br);
+	         Thread.sleep(5000);
+	         if(schk.equals("Pass"))
+		     schk=add(driver,br); 
+		     PrintResult("NotifybyEmail");
+		     i=10;
+	         first=1;
+    	    } 
 	}
 	
-	@Given("^Notify by Email$")
-	public void Notify_by_Email()throws Throwable {
-		 Thread.sleep(20000);
-		 System.out.println("Notify by Email Inprogress");
-		 driver.findElement(By.xpath(".//*[@id='ContentRefresh']/div/div[3]/div[2]/div/a")).click();
-		 Thread.sleep(5000);
-		 DeleteNBE();
-		 Thread.sleep(5000);
-		 addNBE();
-		 Thread.sleep(5000);
-		 Emailvalidation();
-		 driver.close();
-	}
-	public void DeleteNBE() throws InterruptedException {
-		 System.out.println("gain inside Deleteall"); 
+	public String deleteall(WebDriver driver,String br) throws Exception{
+		String schk="Fail"; 
+		System.out.println("gain inside Deleteall"); 
 		 int count= driver.findElements(By.xpath("/html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div/div[3]/div/div[2]/table/tbody/tr/td[5]/label")).size();
 		 System.out.println("count"+count);
 		 Thread.sleep(5000);
@@ -55,121 +57,177 @@ public class NotifybyEmail  {
 			  Thread.sleep(5000);
 		  }
 		  driver.findElement(By.id("mainSubmitButton")).click();
+		  schk=orderprocess(driver,br);
+		  System.out.println(schk);
+		  if(schk.equals("Pass"))
+		  {
+		  i=statusTracker(i,"Pass","Verify if all the emails could be removed","Email addresses were removed successfully","Email address should be removed successfully","");
+		  }
+		  else
+		  {
+		  i=statusTracker(i,"Fail","Verify if all the emails could be removed","Email addresses were not removed successfully","Email address should be removed successfully","");  
+		  }
 	      System.out.println("Delete operation Complete");
+		return schk;
 		
 	}
-
-	  public String randomNO(int max, int min)
-	  {
-	  	  	int Max=max;
-	  	  	int Min=min;
-	  	  	double random1=Min + (int)(Math.random() * ((Max - Min) + 1));
-	  		System.out.println(random1);
-	  		int random2=(int)random1;
-	  		System.out.println(random2);
-	  		String s1 = new Integer(random2).toString();
-	  		return(s1);
-	  		
-	  }
-	  
-	public void addNBE() throws InterruptedException {
-		 System.out.println("addremove Inprogress");
-			  int rand=5;
+	public String add(WebDriver driver,String br) throws Exception {
+		 String schk="Fail";
+		 String email;
+		 int count1 = 0;
+		  System.out.println("goin inside addremove");
+		  if(!(assertTrue(isElementPresent("//html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div[3]/div/div[2]/table/thead/tr"))))
+		  {
+			  int rand=Integer.parseInt("5");
 			  for(int i=1;i<=rand;i++)
-			  { 
-				    Thread.sleep(2000);
-				  	String num=randomNO(9999,1000);
-				  	driver.findElement(By.id("txtEmailAddress")).sendKeys("test"+num+"@test.tst");
-					Thread.sleep(5000);
-				  	driver.findElement(By.id("btnAddtolist")).click();
-			  	    String email="test"+num+"@test.tst";
-			  		System.out.println(email);
-			  }
-			 
-			  Thread.sleep(2000);
-			  driver.findElement(By.id("mainSubmitButton")).click();
-			  
-			  Thread.sleep(20000);
-			  
-			  int count=2; 
-			  for(int i=1;i<=count;i++)
 			  {
-				  Thread.sleep(2000);
-				  driver.findElement(By.cssSelector("button.close-delete.poping")).click();
-				  Thread.sleep(5000);
-				  int count1= driver.findElements(By.xpath("/html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div/div[3]/div/div[2]/table/tbody/tr/td[5]/label")).size();
-				  System.out.println(count1);
+				  	String num=randomNO(9999,1000);
+				  	driver.findElement(By.id("txtEmailAddress")).clear();
+				  	driver.findElement(By.id("txtEmailAddress")).sendKeys("test"+num+"@test.tst");
+				  	Thread.sleep(5000);
+				  	driver.findElement(By.id("btnAddtolist")).click();
+			  		Thread.sleep(3000);
+			  		if(i==rand)
+			  			  email="test"+num+"@test.tst";
 			  }
 			  driver.findElement(By.id("mainSubmitButton")).click();
-			  Thread.sleep(5000);
-			  System.out.println("Add Remove operation complete");
-	    
+			  schk=orderprocess(driver,br);
+			
+			  if(schk.equals("Pass"))
+			  {
+				 i=statusTracker(i,"Pass","Verify if emails could be added", rand+ " Email addresses were added successfully","Email address should be added successfully","");
+				 String rands2=randomNO(2,1);
+		  
+			  int rand2=Integer.parseInt(rands2);
+		
+				  for(int i=1;i<=rand2;i++)
+				  {
+					  Thread.sleep(5000);
+					  driver.findElement(By.cssSelector("button.close-delete.poping")).click();
+					  Thread.sleep(5000);
+					  count1= driver.findElements(By.xpath("/html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div/div[3]/div/div[2]/table/tbody/tr/td[5]/label")).size();
+					  System.out.println(count1);
+					  Thread.sleep(5000);
+				  }
+				  driver.findElement(By.id("mainSubmitButton")).click();
+				  schk=orderprocess(driver,br);
+				  
+				  Thread.sleep(3000);
+				  int count= driver.findElements(By.xpath("/html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div/div[3]/div/div[2]/table/tbody/tr/td[5]/label")).size();
+				  System.out.println(count);
+			
+				 
+				  if(schk.equals("Pass"))
+				  {
+					  i=statusTracker(i,"Pass","Verify if emails could be removed", rand2+ " Email addresses were removed successfully","Email address should be removed successfully","");
+					  int schk2=1;
+					 // for(int i=1;i<=count;i++)
+					 // {
+						  if(count1==count)
+						  {
+							  schk2=0;
+						  }
+					 // }  
+					  if(schk2==0)
+					  {
+						  i=statusTracker(i,"Pass","Verify if email addresses are the same after order process", "Email addresses are the same after order process","Email address should be the same after order process","End");
+						  schk="Pass";
+					  }
+					  else
+					  {
+						  i=statusTracker(i,"Fail","Verify if email addresses are the same after order process", "Email addresses are not the same after order process","Email address should be the same after order process","End");
+						  schk="Fail";
+					  }
+				  }
+				  else
+				  {
+					 i=statusTracker(i,"Fail","Verify if emails could be removed", rand2+ " Email addresses were not removed successfully","Email address should be removed successfully","End");
+					 schk="Fail";
+				  }
+				  
+			  }
+			  else
+			  {
+				 i=statusTracker(i,"Fail","Verify if emails could be added", rand+ " Email addresses were not added successfully","Email address should be added successfully","End");
+				 schk="Fail";
+			  }
+		  }
+		  else
+		  {
+			  schk="Pass";
+			  System.out.println("goin inside addremove2");
+		  }
+		  
+		return schk;
 	}
-	public void Emailvalidation() throws InterruptedException {
-		  String email=null;
+	  public String emailvalidation(WebDriver driver,String br) throws Exception{
+		 String schk ="Pass";
+		 String email;
 		  int count= driver.findElements(By.xpath("/html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div/div[3]/div/div[2]/table/tbody/tr/td[5]/label")).size();
 			 if(count==0)
 				{
 				  driver.findElement(By.id("txtEmailAddress")).clear();	  
 				  driver.findElement(By.id("txtEmailAddress")).sendKeys("aa@gmail.com");
+				  Thread.sleep(5000);
 				  driver.findElement(By.id("btnAddtolist")).click();
 				} 
-		  Thread.sleep(2000);
-		  TNcheck("");
-		  Thread.sleep(2000);
-		  TNcheck("ss.com");
 		  Thread.sleep(5000);
+		  schk=TNcheck(br,"","blank",driver);
+		  Thread.sleep(5000);
+		  schk=TNcheck(br,"ss.com","invalid",driver);
+		  Thread.sleep(5000);
+		
 		  String self=driver.findElement(By.xpath(".//*[@id='EmailGridRefresh']/div[2]/table/tbody/tr[1]/td[1]")).getText(); 
 		  System.out.println(self);
-		  TNcheck(self);
-		  Thread.sleep(2000);
-		  DeleteNBE();
-		  
+		  schk=TNcheck(br,self,"Same",driver);
 		  Thread.sleep(5000);
-		  
-		  int rand=5;
+		  schk=deleteall(driver,br);
+		  int rand=Integer.parseInt("5");
 		  for(int i=1;i<=rand;i++)
-		  {     
-			    Thread.sleep(5000);
+		  {
 			  	String num=randomNO(9999,1000);
 			  	driver.findElement(By.id("txtEmailAddress")).clear();
 			  	driver.findElement(By.id("txtEmailAddress")).sendKeys("test"+num+"@test.tst");
-			  	Thread.sleep(3000);
+			  	Thread.sleep(5000);
 			  	driver.findElement(By.id("btnAddtolist")).click();
-		  		email="test"+num+"@test.tst";
-		  		System.out.println(email);
+		  		Thread.sleep(3000);
+		  		if(i==rand)
+		  			  email="test"+num+"@test.tst";
 		  }
 		  Thread.sleep(5000);
 		  driver.findElement(By.id("mainSubmitButton")).click();
-		  Thread.sleep(5000);
-		  TNcheck("eodi@odi.com");
-		  Thread.sleep(3000);
+		  schk=orderprocess(driver,br);
+		  System.out.println(schk);
+		  schk=TNcheck(br,"eodi@odi.com","max",driver);
 	      driver.findElement(By.xpath("/html/body/div[3]/form/div/div[3]/div[2]/div/div/div/div/div/div[5]/div/button[1]")).click();
-	      DeleteNBE();
-	      System.out.println("Email validation operation complete");
-	     
+	      schk=deleteall(driver,br);              
+	     return schk;
 		
 	}
-	public void TNcheck(String email) throws InterruptedException { 
-		  System.out.println("Before entering email");
+	  public String TNcheck(String br,String email, String check,WebDriver driver) throws Exception{ 
+		  System.out.println("TNcheck");
+		  String schk="Fail";
+		  System.out.println("Befor entering pins");
 		  driver.findElement(By.id("txtEmailAddress")).clear();	  
-		  Thread.sleep(3000);
 		  driver.findElement(By.id("txtEmailAddress")).sendKeys(email);
-		  Thread.sleep(3000);
+		  Thread.sleep(5000);
 			driver.findElement(By.id("btnAddtolist")).click();
-	      System.out.println("after submitting");
+	        System.out.println("after submitting");
 	      Thread.sleep(5000);
-	      String Errormessage=driver.findElement(By.cssSelector("span.help-inline.error")).getText();
-	      int Error=driver.findElements(By.cssSelector("span.help-inline.error")).size();
-	      if(Error!=0)
-	      {
-	 	  System.out.println(Errormessage);
-	 	  }
-	 	  else
-	 	  {
-	      System.out.println("Error  message is not displayed"); 
-	 	  }
+	      if((driver.findElement(By.cssSelector("span.help-inline.error")).isDisplayed()))
+	     {
+		  System.out.println("printing");
+			  i=statusTracker(i,"Pass","Verify if error message is displayed when adding "+check+" email","Error message is displayed: "+ driver.findElement(By.cssSelector("span.help-inline.error")).getText(),"Error message should be displayed","");
+			  schk="Pass";
+		  }
+		  else
+		  {
+			  i=statusTracker(i,"Fail","Verify if error message is displayed when adding "+check+" email","Error message is not displayed","Error message should be displayed","");
+			  schk="Fail";
+		  }
+		  return schk;
 	}
+
+	
+
 }
-
-
